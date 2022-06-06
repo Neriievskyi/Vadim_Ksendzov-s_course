@@ -1,0 +1,11 @@
+Description => Steps to reproduce, Actual Result, Expected Rdesult 
+Project (Name)
+Build version
+Severity
+Priority
+Status (in Bug life cycle)
+Author
+Assigned to
+Environment (Dev, Stage, Prod)
+Attached files (screenshot, video)
+
