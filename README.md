@@ -1,1 +1,0 @@
-# Vadim_Ksendzov-s_course
