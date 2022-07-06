@@ -1,0 +1,91 @@
+{
+	"info": {
+		"_postman_id": "5816bbab-85e2-4243-9df2-1833b8660ec3",
+		"name": "HW_with_CSV",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18301793"
+	},
+	"item": [
+		{
+			"name": "user_info_2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const age = pm.iterationData.get('age');\r",
+							"const name = pm.iterationData.get('name');\r",
+							"const salary = pm.iterationData.get('salary');\r",
+							"\r",
+							"function ageValidation(value){\r",
+							"    return value && !isNaN(value) && value>17 && value<121 && Number.isInteger(+value)\r",
+							"}\r",
+							"\r",
+							"function salaryValidation(value){\r",
+							"    return value && !isNaN(value) && value>0 && value<1000001 && Number.isInteger(+value)\r",
+							"}\r",
+							"\r",
+							"function nameValidation(value){\r",
+							"    return value && value.length > 2 && value.length < 41 && value.trim() === value\r",
+							"}\r",
+							"\r",
+							"function validate(name, age, salary){\r",
+							"    return ageValidation(age) && salaryValidation(salary) && nameValidation(name)\r",
+							"}\r",
+							"\r",
+							"if(validate(name, age, salary)){\r",
+							"    pm.test(`200 code with age == ${age}, salary == ${salary}, and name == ${name}`,() => {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    })\r",
+							"} else {\r",
+							"    pm.test(`NOT 200 code with age == ${age}, salary == ${salary}, and name == ${name}`, () => {\r",
+							"        pm.response.to.not.have.status(200);\r",
+							"    })\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "{{name}}",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "{{age}}",
+							"type": "text"
+						},
+						{
+							"key": "salary",
+							"value": "{{salary}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://162.55.220.72:5005/user_info_2",
+					"protocol": "http",
+					"host": [
+						"162",
+						"55",
+						"220",
+						"72"
+					],
+					"port": "5005",
+					"path": [
+						"user_info_2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
