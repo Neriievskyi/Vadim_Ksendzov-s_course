@@ -1,0 +1,231 @@
+{
+	"info": {
+		"_postman_id": "aef7d683-82bc-40c0-bfea-026d7c9255a3",
+		"name": "HW3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18301793"
+	},
+	"item": [
+		{
+			"name": "object_info_4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Задача - проверить, что salary из request = salary из response умножить на 1, 2, 3.\r",
+							"const respSalary = pm.response.json().salary;\r",
+							"const reqSalary = +pm.request.url.query.get('salary');\r",
+							"\r",
+							"respSalary.forEach((salary, index) => {\r",
+							"    pm.test(`${reqSalary} * ${index + 1} === ${salary}`, () => {\r",
+							"        pm.expect(reqSalary * (index + 1)).to.eql(+salary)\r",
+							"    })\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://162.55.220.72:5005/object_info_4?name={{name}}&age={{age}}&salary={{salary}}",
+					"protocol": "http",
+					"host": [
+						"162",
+						"55",
+						"220",
+						"72"
+					],
+					"port": "5005",
+					"path": [
+						"object_info_4"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{name}}"
+						},
+						{
+							"key": "age",
+							"value": "{{age}}"
+						},
+						{
+							"key": "salary",
+							"value": "{{salary}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "object_info_3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Сравнить поля name, age, salary из request и response таким образом, чтобы это делалось за один тест, без циклов(глубокое сравнение обьектов).\r",
+							"\r",
+							"const reqObject = pm.request.url.query.toObject();\r",
+							"const respObject = {\r",
+							"    age: String(pm.response.json().age),\r",
+							"    name: pm.response.json().name,\r",
+							"    salary: String(pm.response.json().salary)\r",
+							"}\r",
+							"\r",
+							"pm.test('Compare request object and response object', () => {\r",
+							"    pm.expect(reqObject).to.deep.eql(respObject)\r",
+							"})\r",
+							"\r",
+							"// Вариант №2\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"const resp = {};\r",
+							"for(const key in reqObject) {\r",
+							"    resp[key] = isNaN(jsonData[key]) ? jsonData[key] : +jsonData[key]\r",
+							"    reqObject[key] = isNaN(reqObject[key]) ? reqObject[key] : +reqObject[key]\r",
+							"}\r",
+							"\r",
+							"pm.test('2.0 Compare request object and response object', () => {\r",
+							"    pm.expect(reqObject).to.deep.eql(resp)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://162.55.220.72:5005/object_info_3?name={{name}}&age={{age}}&salary={{salary}}",
+					"protocol": "http",
+					"host": [
+						"162",
+						"55",
+						"220",
+						"72"
+					],
+					"port": "5005",
+					"path": [
+						"object_info_3"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{name}}"
+						},
+						{
+							"key": "age",
+							"value": "{{age}}"
+						},
+						{
+							"key": "salary",
+							"value": "{{salary}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_info_2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// 1. Проверить, что в json имеетя нужный параметр(за один цикл)\r",
+							"\r",
+							"const keyIsInJson = ['start_qa_salary', 'qa_salary_after_6_months', 'qa_salary_after_12_months', 'qa_salary_after_1.5_year', 'qa_salary_after_3.5_years', 'person'];\r",
+							"let resp = pm.response.json();\r",
+							"\r",
+							"keyIsInJson.forEach(key => {\r",
+							"    pm.test(`Response has ${key}`, () => {\r",
+							"        pm.expect(resp).to.have.property(key)\r",
+							"    })\r",
+							"})\r",
+							"\r",
+							"// 2. Проверить, что коэффициент умножения salary верный\r",
+							"\r",
+							"const salary = pm.environment.get('salary');\r",
+							"const counters = {\r",
+							"    'start_qa_salary' : 1,\r",
+							"    'qa_salary_after_6_months' : 2,\r",
+							"    'qa_salary_after_12_months' : 2.7,\r",
+							"    'qa_salary_after_1.5_year' : 3.3,\r",
+							"    'qa_salary_after_3.5_years' : 3.8\r",
+							"}\r",
+							"\r",
+							"for(const key in counters){\r",
+							"    pm.test(`${key} from response = salary from request * ${counters[key]}`, () => {\r",
+							"        pm.expect(+resp[key]).to.eql(salary * counters[key])\r",
+							"    })\r",
+							"}\r",
+							"\r",
+							"// 3. Преобразовать обе предидущие проверки так, чтобы они проводились в одном цикле\r",
+							"\r",
+							"counters['person'] = '';\r",
+							"\r",
+							"for(const key in counters){\r",
+							"    pm.test(`Response has ${key}`, () => {\r",
+							"        pm.expect(resp).to.have.property(key)\r",
+							"    })\r",
+							"if(key != 'person'){\r",
+							"    pm.test(`${key} from response = salary from request * ${counters[key]}`, () => {\r",
+							"        pm.expect(+resp[key]).to.eql(salary * counters[key])\r",
+							"    })  \r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "{{name}}",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "{{age}}",
+							"type": "text"
+						},
+						{
+							"key": "salary",
+							"value": "{{salary}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://162.55.220.72:5005/user_info_2",
+					"protocol": "http",
+					"host": [
+						"162",
+						"55",
+						"220",
+						"72"
+					],
+					"port": "5005",
+					"path": [
+						"user_info_2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
